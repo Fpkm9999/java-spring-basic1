@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <configuration status="INFO">
+    <!-- 로그 설정의 전반적인 상태를 INFO로 설정하여 정보 레벨의 로그 이상만 출력하도록 합니다. -->
 
     <Appenders>
-        <!-- 콘솔 -->
+        <!-- Appenders 섹션: 로그를 출력할 대상을 정의합니다. -->
+
         <Console name="console" target="SYSTEM_OUT">
+            <!-- 콘솔 Appender: 로그 메시지를 시스템 콘솔(표준 출력)으로 보냅니다. -->
             <PatternLayout charset="UTF-8" pattern="%d{hh:mm:ss} %5p [%c] %m%n"/>
+            <!-- 로그 메시지의 출력 형식을 지정합니다. 시간, 우선순위, 카테고리, 메시지 순으로 표시됩니다.
+                 charset="UTF-8"로 설정하여 로그의 문자 인코딩을 UTF-8로 지정합니다. -->
         </Console>
     </Appenders>
 
     <loggers>
+        <!-- Loggers 섹션: 개별 로거의 동작을 설정합니다. -->
 
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <!-- org.springframework 패키지 로거를 INFO 레벨로 설정하고, 상위 로거로 로그가 전달되지 않도록 additivity를 false로 설정합니다. -->
+            <appender-ref ref="console"/>
+            <!-- 이 로거의 로그를 console Appender로 보냅니다. -->
+        </logger>
 
-        <root level="INFO">
+        <logger name="com.example" level="INFO" additivity="false">
+            <!-- com.example 패키지 로거를 INFO 레벨로 설정합니다. -->
+            <appender-ref ref="console"/>
+            <!-- 이 로거의 로그를 console Appender로 보냅니다. -->
+        </logger>
+
+        <logger name="com.example.spring_basic.mapper" level="TRACE" additivity="false">
+            <!-- com.example.spring_basic.mapper 패키지 로거를 TRACE 레벨로 설정합니다.
+                 TRACE 레벨은 상세한 디버깅 정보를 제공하므로, 이 로거는 매우 상세한 로깅을 수행합니다. -->
+            <appender-ref ref="console"/>
+            <!-- 이 로거의 로그를 console Appender로 보냅니다. -->
+        </logger>
+
+        <root level="INFO" additivity="false">
+            <!-- Root 로거 설정: 기본 로그 레벨을 INFO로 설정하고, 상위 로거로의 로그 전달을 차단합니다. -->
             <AppenderRef ref="console"/>
+            <!-- Root 로거의 로그를 console Appender로 보냅니다. -->
         </root>
 
     </loggers>

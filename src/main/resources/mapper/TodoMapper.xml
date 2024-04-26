@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.spring_basic.mapper.TodoMapper">
+    <!-- MyBatis 매핑 파일로, 데이터베이스 작업을 위한 SQL 쿼리와 이를 실행할 메서드를 정의 -->
+    <select id="getTime" resultType="string">
+        <!-- id는 메소드 이름과 매핑, 실행 결과는 string 타입 -->
+        select now() <!-- 현재 시각을 반환하는 SQL 쿼리 -->
+    </select>
+
+    <insert id="insert">
+        <!-- insert 쿼리의 id를 'insert'로 정의 -->
+        insert into tbl_todo (title, dueDate, writer) VALUES (#{title},#{dueDate},#{writer})
+        <!-- tbl_todo 테이블에 새로운 행을 추가. title, dueDate, writer 값은 파라미터에서 받음 -->
+    </insert>
+
+    <select id="selectAll" resultType="com.example.spring_basic.domain.TodoVO">
+        <!-- id 'selectAll', 반환 타입은 TodoVO 객체 -->
+        select * from tbl_todo order by tno desc
+        <!-- tno 열의 내림차순으로 tbl_todo 테이블의 모든 행을 조회하는 SQL 쿼리 -->
+    </select>
+
+    <select id="selectOne" resultType="com.example.spring_basic.domain.TodoVO">
+        <!-- id 'selectOne', 반환 타입은 TodoVO 객체 -->
+        select * from tbl_todo where tno = #{tno}
+    </select>
+
+    <select id="delete">
+        DELETE
+        from tbl_todo
+        where tno = #{tno}
+    </select>
+
+    <select id="update">
+        UPDATE `tbl_todo`
+        set `title`    = #{title},
+            `dueDate`  = #{dueDate},
+            `finished` = #{finished}
+        where tno = #{tno}
+    </select>
+    <select id="selectList" resultType="com.example.spring_basic.domain.TodoVO">
+        select * from tbl_todo order by tno desc limit #{skip}, #{size}
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(*) FROM tbl_todo
+    </select>
+
+</mapper>

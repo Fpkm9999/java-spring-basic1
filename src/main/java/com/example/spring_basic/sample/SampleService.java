@@ -1,5 +1,6 @@
 package com.example.spring_basic.sample;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
