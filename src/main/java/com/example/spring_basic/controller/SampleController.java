@@ -19,7 +19,7 @@ public class SampleController {
         log.info("hello(_)...");
     }
 
-    @GetMapping("/ex1")
+    @GetMapping("/ex1") // 파라미터를 URL에서 직접 받아 처리
     public void ex1(String name, int age) {
         log.info("ex1()...");
         log.info("name: " + name);
@@ -27,7 +27,7 @@ public class SampleController {
         log.info("T A B I ");
     }
 
-    @GetMapping("/ex2")
+    @GetMapping("/ex2") // RequestParam 어노테이션을 사용하여 파라미터 기본값 지정
     public void ex2(@RequestParam(name = "name", defaultValue = "aaa") String name,
                     @RequestParam(name = "age", defaultValue = "16") int age) {
         log.info("ex2()...");

@@ -20,15 +20,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 @Controller
+@RequestMapping("/todo")
 @Log4j2
-@RequestMapping("/todo") // 클래스 단위 todo 을 찾고 list를 찾음
-
 // 2024-04-25 유효성검증을 위한 코드 추가
 @RequiredArgsConstructor
 public class TodoController {
-    public final TodoService todoService; // 2024-04-25 유효성검증을 위한 코드 추가
+    public final TodoService todoService; // 2024-04-25 To1do 등록을 위해 주입 (final타입은 주입 요청)
 
-    //    @RequestMapping("/list") //   클래스 매밉 / 메소드 매핑순으로 member.login 처럼 도 사용
+    //    @RequestMapping("/list") //   클래스 매핑 / 메소드 매핑순으로 member.login 처럼 도 사용
 //    public void list() {
 //        log.info("todo list...");
 //    }
@@ -103,7 +102,7 @@ public class TodoController {
 //    }
 
     @GetMapping({"/read", "/modify"}) // 매핑은 매개변수로 하나만 받을 수 있기 때문에 중괄호로 묶어서(배열형태로) 콤마로 2개의 매개변수를 받을 수 있다.
-    public void read(Long tno, Model model) {
+    public void read(Long tno, PageRequestDTO pageRequestDTO, Model model) {
         // 1) request로 전달 받은 tno를 서비스에 전달해서 TodoDTO를 반환받아서 view 에 전달
         TodoDTO todoDTO = todoService.getOne(tno);
         log.info(todoDTO);
@@ -112,38 +111,51 @@ public class TodoController {
     }
 
     @PostMapping("/remove")
-    public String remove(Long tno, RedirectAttributes redirectAttributes) {
+    public String remove(Long tno, PageRequestDTO pageRequestDTO, RedirectAttributes redirectAttributes) {
         log.info("----------remove----------");
         log.info("tno: " + tno);
 
         todoService.remove(tno); //서비스단에 remove 쿼리 명령
 
+        redirectAttributes.addAttribute("page", 1);
+        redirectAttributes.addAttribute("size", pageRequestDTO.getSize());
+
         return "redirect:/todo/list";
     }
 
     @PostMapping("/modify")
-    public String modify(@Valid TodoDTO todoDTO,
+    public String modify(PageRequestDTO pageRequestDTO,
+                         @Valid TodoDTO todoDTO,
                          BindingResult bingBindingResult,
                          RedirectAttributes redirectAttributes) {
+
+        log.info(" 20240429 수정작업 ");
+        redirectAttributes.addAttribute("page",pageRequestDTO.getPage());
+        redirectAttributes.addAttribute("size",pageRequestDTO.getSize());
+
+        log.info("--------- modify ----------");
         if (bingBindingResult.hasErrors()) { // 유효성 검사 결과 에러가 있으면 수정페이지로 되돌아감
             log.info(("has error...에러뜸"));
             redirectAttributes.addFlashAttribute("errors", bingBindingResult.getAllErrors());
             redirectAttributes.addAttribute("tno", todoDTO.getTno()); // tno가 쿼리스트림으로 전달
+
             return "redirect:/todo/modify";
         }
         log.info("modify(정상) 코드실행");
         log.info(todoDTO);
         todoService.modify(todoDTO);
+
         return "redirect:/todo/list";
     }
 
     @GetMapping("/list")
-    public void list(@Valid PageRequestDTO pageRequestDTO, BindingResult bindingResult, Model model){
-        log.info(pageRequestDTO);
+    public void list(@Valid PageRequestDTO pageRequestDTO, BindingResult bindingResult, Model model) {
+        log.info(pageRequestDTO); //
 
-        if(bindingResult.hasErrors()){
-            pageRequestDTO = pageRequestDTO.builder().build();
+        if (bindingResult.hasErrors()) {
+            pageRequestDTO = PageRequestDTO.builder().build();
         }
-        model.addAttribute("responseDTO",todoService.getList(pageRequestDTO));
+        model.addAttribute("responseDTO", todoService.getList(pageRequestDTO));
     }
+
 }

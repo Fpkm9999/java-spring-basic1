@@ -47,6 +47,10 @@
                         <%-- 폼 태그 추가 수정 반영을 위한 --%>
                         <%-- title, duedate 는 수정이 필요하므로 readonly 지운다. finished 도 활성화 하기위해 disabled 지움--%>
                         <form action="/todo/modify" method="post">
+                            <%-- --%>
+                            <input type="hidden" name="page" value="${pageRequestDTO.page}">
+                            <input type="hidden" name="size" value="${pageRequestDTO.size}">
+
                             <%-- 2024-04-26 09:30 작업 --%>
                             <div class="input-group mb-3">
                                 <scan class="input-group-text">Tno</scan>
@@ -82,6 +86,7 @@
                         </form>
                         <%-- 2024-04-26 2교시 10:05 추가--%>
                         <script>
+                            <%-- 수정 클릭시 이벤트 --%>
                             <%-- modify 버튼 기능 추가--%>
                             const frmModify = document.querySelector("form");
 
@@ -96,10 +101,14 @@
                             <%-- 기존 코드 --%>
                             document.querySelector(".btn-primary").addEventListener("click", function () {
                                 self.location = "/todo/modify?tno=" + ${dto.tno};
+                                <%--self.location = "/todo/modify?tno=" + ${dto.tno} +'&${pageRequestDTO.link}' ;--%>
+                                console.log(self.location);
                             });
 
                             document.querySelector(".btn-secondary").addEventListener("click", function () {
-                                self.location = "/todo/list";
+                                // self.location = "/todo/list";
+                                self.location = "/todo/list?${pageRequestDTO.link}";
+
                             })
                         </script>
                         <%-- 체크박스를 위한 폼매터 작업 2024-04-26 12:00 --%>
@@ -124,6 +133,7 @@
                                 frmView.method = "post";
                                 frmView.submit();
                             })
+
                         </script>
                             <%-- 체크박스를 위한 폼매터 작업 2024-04-26 12:00 END --%>
 

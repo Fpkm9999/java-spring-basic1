@@ -43,6 +43,43 @@
                 </div>
             </div>
         </nav>
+        <%-- 추가된 코드 2024-04-30 --%>
+        <div class="row content">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Search </h5>
+                        <form action="/todo/list" method="get">
+                            <input type="hidden" name="size" value="${pageRequestDTO.size}">
+                            <div class="mb-3">
+                                <input type="checkbox" name="finished"${pageRequestDTO.finished ? " checked" : ""}>완료여부
+                            </div>
+                            <div class="mb-3">
+                                <input type="checkbox" name="types"
+                                       value="t"${pageRequestDTO.checkType("t") ? " checked" : ""}>제목
+                                <input type="checkbox" name="types"
+                                       value="w"${pageRequestDTO.checkType("w") ? " checked" : ""}>작성자
+                                <input type="text" name="keyword" class="form-control"
+                                       value="${pageRequestDTO.keyword}">
+                            </div>
+                            <div class="input-group mb-3 dueDateDiv">
+                                <input type="date" name="from" class="form-control" value="${pageRequestDTO.from}">
+                                <input type="date" name="to" class="form-control" value="${pageRequestDTO.to}">
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="float-end">
+                                    <button class="btn btn-primary" type="submit">Search</button>
+                                    <button class="btn btn-info clearBtn" type="reset">Clear</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
         <!--       기존의 헤더 <h1>Header</h1>-->
         <div class="row content">
             <div class="col">
@@ -79,8 +116,12 @@
                             <c:forEach var="dto" items="${responseDTO.dtoList}">
                                 <tr>
                                     <th scope="row">${dto.tno}</th>
-                                    <td><a href="/todo/read?tno=${dto.tno}" class="text-decoration-none">
-                                        <c:out value="${dto.title}"/></a></td>
+                                        <%-- 페이지 값을 넘겨받을 수 있도록 수정 --%>
+                                    <td><a href="/todo/read?tno=${dto.tno}&${pageRequestDTO.link}"
+                                           class="text-decoration-none"
+                                           data-tno="${dto.tno}">
+                                        <c:out value="${dto.title}"/>
+                                    </a></td>
                                     <td>${dto.writer}</td>
                                     <td>${dto.dueDate}</td>
                                     <td>${dto.finished}</td>
@@ -90,40 +131,70 @@
                             <%-- 페이징 처리 2024-04-26 16:34 --%>
                             <%-- https://getbootstrap.com/docs/5.1/components/pagination/ --%>
                         </table>
-                            <div class="float-end">
-                                <ul class="pagination flex-wrap">
-                                    <c:if test="${responseDTO.prev}">
-                                        <li class="page-item">
-                                            <a class="page-link">Previous</a>
-                                        </li>
-                                    </c:if>
-                                    <c:forEach var="num" begin="${responseDTO.start}" end="${responseDTO.end}">
-                                        <li class="page-item"><a class="page-link" href="#">${num}</a> </li>
-                                    </c:forEach>
-                                    <c:if test="${responseDTO.next}">
-                                        <li class="page-item">
-                                            <a class="page-link">Next</a>
-                                        </li>
-                                    </c:if>
-                                </ul>
-                            </div>
+                        <div class="float-end">
+                            <ul class="pagination flex-wrap">
+                                <c:if test="${responseDTO.prev}">
+                                    <li class="page-item">
 
-<%--                            --%>
-<%--                            <nav aria-label="...">--%>
-<%--                                <ul class="pagination">--%>
-<%--                                    <li class="page-item disabled">--%>
-<%--                                        <a class="page-link">Previous</a>--%>
-<%--                                    </li>--%>
-<%--                                    <li class="page-item"><a class="page-link" href="#">1</a></li>--%>
-<%--                                    <li class="page-item active" aria-current="page">--%>
-<%--                                        <a class="page-link" href="#">2</a>--%>
-<%--                                    </li>--%>
-<%--                                    <li class="page-item"><a class="page-link" href="#">3</a></li>--%>
-<%--                                    <li class="page-item">--%>
-<%--                                        <a class="page-link" href="#">Next</a>--%>
-<%--                                    </li>--%>
-<%--                                </ul>--%>
-<%--                            </nav>--%>
+                                            <%--                                        <a class="page-link">Previous</a>--%>
+                                        <a class="page-link" data-num="${responseDTO.start -1}">Previous</a>
+                                    </li>
+                                </c:if>
+                                <c:forEach var="num" begin="${responseDTO.start}" end="${responseDTO.end}">
+                                    <li class="page-item ${responseDTO.page == num ? "active" : ""}">
+                                        <a class="page-link" data-num="${num}">${num}</a>
+                                    </li>
+                                </c:forEach>
+                                <c:if test="${responseDTO.next}">
+                                    <li class="page-item">
+                                        <a class="page-link" data-num="${responseDTO.end +1}">Next</a>
+                                    </li>
+                                </c:if>
+                            </ul>
+                        </div>
+                        <%-- 이전, 다음페이지에 이벤트 처리 추가 --%>
+                        <script>
+                            document.querySelector('.pagination').addEventListener('click', function (e) {
+                                e.preventDefault(); // 기존의 태그 이벤트 무효화
+                                e.stopPropagation();
+
+                                const target = e.target;
+                                if (target.tagName !== 'A') { // A태그가 아니면 리턴
+                                    return;
+                                }
+                                // A 태그인 경우
+                                const num = target.getAttribute('data-num');
+
+                                const frmPage = document.querySelector('form');
+                                // 히든페이지를 이용해서 값을 받음
+                                frmPage.innerHTML += `<input type=hidden name="page" value="\&{num}">`;
+                                frmPage.submit();
+
+                                // self.location = `/todo/list?page=\${num}`; // 백틱을 이용해서 템플릿 처리
+                            })
+                        </script>
+                        <script>
+                            document.querySelector('.clearBtn').addEventListener('click', function (e) {
+                                self.location = '/todo/list';
+                            })
+                        </script>
+
+                        <%--                            --%>
+                        <%--                            <nav aria-label="...">--%>
+                        <%--                                <ul class="pagination">--%>
+                        <%--                                    <li class="page-item disabled">--%>
+                        <%--                                        <a class="page-link">Previous</a>--%>
+                        <%--                                    </li>--%>
+                        <%--                                    <li class="page-item"><a class="page-link" href="#">1</a></li>--%>
+                        <%--                                    <li class="page-item active" aria-current="page">--%>
+                        <%--                                        <a class="page-link" href="#">2</a>--%>
+                        <%--                                    </li>--%>
+                        <%--                                    <li class="page-item"><a class="page-link" href="#">3</a></li>--%>
+                        <%--                                    <li class="page-item">--%>
+                        <%--                                        <a class="page-link" href="#">Next</a>--%>
+                        <%--                                    </li>--%>
+                        <%--                                </ul>--%>
+                        <%--                            </nav>--%>
 
 
                         <%--            <h5 class="card-title">Special title treatment</h5>--%>

@@ -3,6 +3,34 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.spring_basic.mapper.TodoMapper">
+
+    <sql id="search">
+        <where>
+            <if test="types != null and types.length > 0">
+                <foreach collection="types" item="type" open="(" close=")" separator=" OR">
+                    <if test="type == 't'.toString()">
+                        title like concat('%',#{keyword}, '%')
+                    </if>
+                    <if test="type == 'w'.toString()">
+                        writer like concat('%',#{keyword},'%')
+                    </if>
+                </foreach>
+
+            </if>
+            <if test="finished">
+                <trim prefix="and">
+                    finished=1
+                </trim>
+            </if>
+
+            <if test="from != null and to != null">
+                <trim prefix="and">
+                    dueDate between #{from} and #{to}
+                </trim>
+            </if>
+        </where>
+    </sql>
+
     <!-- MyBatis 매핑 파일로, 데이터베이스 작업을 위한 SQL 쿼리와 이를 실행할 메서드를 정의 -->
     <select id="getTime" resultType="string">
         <!-- id는 메소드 이름과 매핑, 실행 결과는 string 타입 -->
@@ -40,11 +68,38 @@
         where tno = #{tno}
     </select>
     <select id="selectList" resultType="com.example.spring_basic.domain.TodoVO">
-        select * from tbl_todo order by tno desc limit #{skip}, #{size}
+        select * from tbl_todo
+        <include refid="search"></include>
+        <!--        <where>-->
+        <!--            <if test="types != null and types.length > 0">-->
+        <!--                <foreach collection="types" item="type" open="(" close=")" separator=" OR">-->
+        <!--                    <if test="type == 't'.toString()">-->
+        <!--                        title like concat('%',#{keyword}, '%')-->
+        <!--                    </if>-->
+        <!--                    <if test="type == 'w'.toString()">-->
+        <!--                        writer like concat('%',#{keyword},'%')-->
+        <!--                    </if>-->
+        <!--                </foreach>-->
+
+        <!--            </if>-->
+        <!--            <if test="finished">-->
+        <!--                <trim prefix="and">-->
+        <!--                    finished=1-->
+        <!--                </trim>-->
+        <!--            </if>-->
+
+        <!--             <if test="from != null and to != null">-->
+        <!--                 <trim prefix="and">-->
+        <!--                     dueDate between #{from} and #{to}-->
+        <!--                 </trim>-->
+        <!--             </if>-->
+        <!--        </where>-->
+        order by tno desc limit #{skip}, #{size}
     </select>
 
     <select id="getCount" resultType="int">
-        select count(*) FROM tbl_todo
+        select count(tno) FROM tbl_todo
+        <include refid="search"></include>
     </select>
 
 </mapper>

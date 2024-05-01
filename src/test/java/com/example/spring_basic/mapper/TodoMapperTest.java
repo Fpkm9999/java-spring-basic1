@@ -107,4 +107,25 @@ class TodoMapperTest {
     public void testGetCount() {
         log.info(todoMapper.getCount(PageRequestDTO.builder().build()));
     }
+
+
+    @Test
+    public void testSelectSearch() {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(1)
+                .size(10)
+//                .types(new String[]{"t", "w"})
+//                .types(new String[]{"t", "w"})
+//                .keyword("김전일")
+                .from(LocalDate.parse("2024-05-01"))
+                .to(LocalDate.parse("2024-05-05"))
+//                .finished(true)
+                .build();
+        List<TodoVO> voList = todoMapper.selectList(pageRequestDTO);
+        voList.forEach(vo -> log.info(vo));
+
+        log.info("-----getCoount()-----");
+        log.info(todoMapper.getCount(pageRequestDTO));
+    }
+
 }

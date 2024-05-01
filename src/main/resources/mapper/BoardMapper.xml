@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.spring_basic.mapper.BoardMapper">
+
+
+    <insert id="insert">
+        <!-- insert 쿼리의 id를 'insert'로 정의 -->
+        insert into board (title, content, writer, passwd, addDate) values (#{title},#{content},#{writer},Password(#{passwd}),now());
+        <!-- tbl_todo 테이블에 새로운 행을 추가. title, content, writer, passwd 값은 파라미터에서 받음 -->
+    </insert>
+
+
+    <!-- DB 조회 기능   -->
+    <select id="selectAll" resultType="com.example.spring_basic.domain.BoardVO">
+        select * from board order by no desc
+    </select>
+
+</mapper>

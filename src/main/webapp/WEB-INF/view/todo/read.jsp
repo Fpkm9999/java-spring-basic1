@@ -78,17 +78,19 @@
                         <div class="my-4">
                             <div class="float-end">
                                 <button type="submit" class="btn btn-primary">Modify</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
+                                <button type="reset" class="btn btn-secondary">List</button>
                             </div>
                         </div>
                         <%-- 2024-04-26 2교시 10:05 추가--%>
                         <script>
                             document.querySelector(".btn-primary").addEventListener("click", function () {
-                                self.location = "/todo/modify?tno=" + ${dto.tno};
+                                self.location = "/todo/modify?tno=" + ${dto.tno} + '&${pageRequestDTO.link}';
                             });
 
+                            // 목록으로 이동하는 이벤트 처리
                             document.querySelector(".btn-secondary").addEventListener("click", function () {
-                                self.location = "/todo/list";
+                                // self.location = "/todo/list";
+                                self.location = "/todo/list?${pageRequestDTO.link}";
                             })
                         </script>
                     </div>
