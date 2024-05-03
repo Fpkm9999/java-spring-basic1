@@ -14,7 +14,7 @@ public interface TodoService {
     // 페이징 처리를 위한 메소드
     PageResponseDTO<TodoDTO> getList(PageRequestDTO pageResponseDTO);
 
-    TodoDTO getOne(Long tno);
+    public abstract TodoDTO getOne(Long tno);
 
     void remove(Long tno);
 

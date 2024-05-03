@@ -4,17 +4,70 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.spring_basic.mapper.BoardMapper">
 
-
+    <!-- 새 게시물 삽입을 위한 SQL 명령 정의 -->
     <insert id="insert">
-        <!-- insert 쿼리의 id를 'insert'로 정의 -->
-        insert into board (title, content, writer, passwd, addDate) values (#{title},#{content},#{writer},Password(#{passwd}),now());
-        <!-- tbl_todo 테이블에 새로운 행을 추가. title, content, writer, passwd 값은 파라미터에서 받음 -->
+        <!-- insert 쿼리의 id를 'insert'로 정의. 게시판 테이블(board)에 새로운 게시물 데이터를 삽입 -->
+        insert into board (title, content, writer, passwd, addDate)
+        values (#{title}, #{content}, #{writer}, Password(#{passwd}), now());
+        <!--
+        파라미터:
+        title - 게시글 제목
+        content - 게시글 내용
+        writer - 작성자 ID
+        passwd - 게시글 접근 비밀번호, 함수 Password()로 암호화 처리
+        addDate - 현재 시간/날짜로 자동 설정
+        -->
     </insert>
 
-
-    <!-- DB 조회 기능   -->
+    <!-- 모든 게시물 조회를 위한 SQL 명령 정의 -->
     <select id="selectAll" resultType="com.example.spring_basic.domain.BoardVO">
+        <!-- DB의 board 테이블에서 모든 행을 조회하여 결과를 BoardVO 타입 리스트로 반환 -->
         select * from board order by no desc
+        <!-- 결과는 게시글 번호(no)의 내림차순으로 정렬 -->
     </select>
 
+    <!-- 특정 게시물 조회를 위한 SQL 명령 정의 -->
+    <!-- id 값은 Mapper 인터페이스에 정의 -->
+    <select id="selectOne" resultType="com.example.spring_basic.domain.BoardVO">
+        select *
+        from board
+        where no = #{no}
+    </select>
+
+    <!-- 조회수 업데이트 SQL 명령 -->
+    <update id="updateHit">
+        update board
+        set hit = hit + 1
+        where no = #{no}
+    </update>
+
+
+    <!--특정 게시글의 게시글,내용을 업데이트(수정)하는 SQL 명령 정의-->
+    <!--
+       @test
+       update board SET ``.Board.title='DataGrip에서수정1',``.Board.content='DataGrip에서수정'
+       where ``.Board.no=12
+       -->
+    <update id="updateOne">
+        update board
+        set title   = #{title},
+            content = #{content}
+        where no = #{no}
+    </update>
+
+    <!-- 특정 게시글을 삭제하는 SQL 명령 정의 -->
+    <!--
+        @test
+        delete from board where ``.Board.no=19;
+        -->
+    <select id="deleteOne">
+        delete
+        from board
+        where no = #{no}
+    </select>
+
+    <!--    -->
+    <select id="selectOneByPasswd" resultType="com.example.spring_basic.domain.BoardVO">
+        select * from board where no = #{no} and passwd = PASSWORD(#{passwd})
+    </select>
 </mapper>

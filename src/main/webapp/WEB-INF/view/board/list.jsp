@@ -25,37 +25,42 @@
     <div class="col">
         <div class="card">
             <div class="card-header">
-                Featured
-            </div>
-            <div class="card-body">
-                <%-- 2024-04-25 12:28 작업 --%>
-                <%--  부트5 에서 게시판 코드복붙        --%>
-                <h5 class="card-title">Special title treatment</h5>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">no</th>
-                        <th scope="col">writer</th>
-                        <th scope="col">title</th>
-                        <th scope="col">addDate</th>
-                        <th scope="col">content</th>
-                        <th scope="col">passwd</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach var="board" items="${dtoList}">
-                        <tr>
-                            <td>${board.no}</td>
-                            <td>${board.writer}</td>
-                            <td>${board.title}</td>
-                            <td>${board.addDate}</td>
-                            <td>${board.content}</td>
-                            <td>${board.passwd}</td>
 
-                            <td>${board.hit}</td>
+                <div class="card-body">
+                    <%-- 2024-04-25 12:28 작업 --%>
+                    <%--  부트5 에서 게시판 코드복붙        --%>
+                    <h5 class="card-title">board 게시판</h5>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">no</th>
+                            <th scope="col">title</th>
+                            <th scope="col">writer</th>
+                            <th scope="col">조회수</th>
+                            <th scope="col">addDate</th>
                         </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="board" items="${dtoList}">
+                            <tr>
+                                <td>${board.no}</td>
+                                <td><a href="/board/read?no=${board.no}" class="text-decoration-none">${board.title}</a>
+                                </td>
+                                <td>${board.writer}</td>
+                                <td>${board.hit}</td>
+                                <td>${board.addDate}</td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 </body>
 </html>
